@@ -1,37 +1,44 @@
-let isValid = true;
-
-function F31(array_number) {
-    array_number.forEach((row, i) => {
-        if(!F21(row)) {
-            console.log(`Line ${i+1} incorrect ${row.join(' ')}`);
-            isValid = false;
-        }
-    });
+function getRegion(row, col) {
+    return Math.floor(row / 3) * 3 + Math.floor(col / 3) + 1;
 }
 
-function F32(array_number) {
-    array_number[0].forEach((_, i) => {
-        let column = array_number.map(row => row[i]);
-        if(!F21(column)) {
-            console.log(`Column ${i+1} incorrect ${column.join(' ')}`);
-            isValid = false;
-        }
-    });
+function displayAnomaly(message, values) {
+    let messages = document.getElementById('messages');
+    messages.innerHTML += `${message} ${values.join(' ')}<br>`;
 }
 
-function F33(array_number) {
-    for(let i = 0; i < 3; i++) {
-        for(let j = 0; j < 3; j++) {
-            let region = [];
-            for(let x = 0; x < 3; x++) {
-                for(let y = 0; y < 3; y++) {
-                    region.push(array_number[i*3 + x][j*3 + y]);
+function F31(sudoku) {
+    for (let i = 0; i < sudoku.length; i++) {
+        if (!F21(sudoku[i])) {
+            displayAnomaly(`Row ${i + 1} incorrect`, sudoku[i]);
+        }
+    }
+}
+
+function F32(sudoku) {
+    for (let i = 0; i < sudoku[0].length; i++) {
+        let column = [];
+        for (let j = 0; j < sudoku.length; j++) {
+            column.push(sudoku[j][i]);
+        }
+        if (!F21(column)) {
+            displayAnomaly(`Column ${i + 1} incorrect`, column);
+        }
+    }
+}
+
+function F33(sudoku) {
+    for (let region = 1; region <= 9; region++) {
+        let cells = [];
+        for (let i = 0; i < sudoku.length; i++) {
+            for (let j = 0; j < sudoku[i].length; j++) {
+                if (getRegion(i, j) === region) {
+                    cells.push(sudoku[i][j]);
                 }
             }
-            if(!F21(region)) {
-                console.log(`Region ${i*3 + j + 1} incorrect ${region.join(' ')}`);
-                isValid = false;
-            }
+        }
+        if (!F21(cells)) {
+            displayAnomaly(`Region ${region} incorrect`, cells);
         }
     }
 }
@@ -39,9 +46,4 @@ function F33(array_number) {
 F31(array_number);
 F32(array_number);
 F33(array_number);
-
-if(isValid) {
-    console.log("The sudoku is valid.");
-} else {
-    console.log("The sudoku is not valid.");
-}
+updateMessages();
