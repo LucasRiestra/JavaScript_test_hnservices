@@ -2,48 +2,39 @@ function getRegion(row, col) {
     return Math.floor(row / 3) * 3 + Math.floor(col / 3) + 1;
 }
 
-function displayAnomaly(message, values) {
+function updateMessagesWithColumnsAndRegions() {
     let messages = document.getElementById('messages');
-    messages.innerHTML += `${message} ${values.join(' ')}<br>`;
-}
+    messages.innerHTML = "";
 
-function F31(sudoku) {
-    for (let i = 0; i < sudoku.length; i++) {
-        if (!F21(sudoku[i])) {
-            displayAnomaly(`Row ${i + 1} incorrect`, sudoku[i]);
-        }
+    for (let i = 0; i < array_number.length; i++) {
+        let p = document.createElement('p');
+        p.textContent = `Row ${i + 1}: ${F21(array_number[i]) ? 'Valid' : 'Invalid'}`;
+        messages.appendChild(p);
     }
-}
 
-function F32(sudoku) {
-    for (let i = 0; i < sudoku[0].length; i++) {
+    for (let i = 0; i < array_number[0].length; i++) {
         let column = [];
-        for (let j = 0; j < sudoku.length; j++) {
-            column.push(sudoku[j][i]);
+        for (let j = 0; j < array_number.length; j++) {
+            column.push(array_number[j][i]);
         }
-        if (!F21(column)) {
-            displayAnomaly(`Column ${i + 1} incorrect`, column);
-        }
+        let p = document.createElement('p');
+        p.textContent = `Column ${i + 1}: ${F21(column) ? 'Valid' : 'Invalid'}`;
+        messages.appendChild(p);
     }
-}
 
-function F33(sudoku) {
     for (let region = 1; region <= 9; region++) {
         let cells = [];
-        for (let i = 0; i < sudoku.length; i++) {
-            for (let j = 0; j < sudoku[i].length; j++) {
+        for (let i = 0; i < array_number.length; i++) {
+            for (let j = 0; j < array_number[i].length; j++) {
                 if (getRegion(i, j) === region) {
-                    cells.push(sudoku[i][j]);
+                    cells.push(array_number[i][j]);
                 }
             }
         }
-        if (!F21(cells)) {
-            displayAnomaly(`Region ${region} incorrect`, cells);
-        }
+        let p = document.createElement('p');
+        p.textContent = `Region ${region}: ${F21(cells) ? 'Valid' : 'Invalid'}`;
+        messages.appendChild(p);
     }
 }
 
-F31(array_number);
-F32(array_number);
-F33(array_number);
-updateMessages();
+updateMessagesWithColumnsAndRegions();
